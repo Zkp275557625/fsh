@@ -12,33 +12,13 @@ import android.graphics.Bitmap;
  */
 
 public class ImageHelperJNI {
-    /**
-     * 多色调  div可选2的倍数 越大颜色越少
-     *
-     * @param bitmap
-     * @param div
-     * @return
-     */
-    public static Bitmap ColorReduce(Bitmap bitmap, int div) {
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
-
-        int[] buf = new int[w * h];
-        bitmap.getPixels(buf, 0, w, 0, 0, w, h);
-
-        int[] resultPixes = OpenCVCPP.ColorReduce(buf, w, h, div);
-
-        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
-        return result;
-    }
 
     /**
      * 铅笔画
      *
-     * @param bitmap
-     * @return
+     * @param bitmap         原图片
+     * @param pencil_texture 纹理图
+     * @return 处理结果
      */
     public static Bitmap Pencil(Bitmap bitmap, Bitmap pencil_texture) {
         int w = bitmap.getWidth();
@@ -63,8 +43,9 @@ public class ImageHelperJNI {
     /**
      * 彩色铅笔画
      *
-     * @param bitmap
-     * @return
+     * @param bitmap         原图片
+     * @param pencil_texture 纹理图
+     * @return 处理结果
      */
     public static Bitmap ColorPencil(Bitmap bitmap, Bitmap pencil_texture) {
         int w = bitmap.getWidth();
@@ -87,10 +68,53 @@ public class ImageHelperJNI {
     }
 
     /**
+     * 抽象画
+     *
+     * @param bitmap 原图片
+     * @return 处理结果
+     */
+    public static Bitmap CoherenceFilter(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int[] pix = new int[w * h];
+
+        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+
+        int[] resultPixes = OpenCVCPP.CoherenceFilter(pix, w, h);
+        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
+
+        return result;
+    }
+
+    /**
+     * 低面多边形
+     *
+     * @param bitmap 原图片
+     * @return 处理结果
+     */
+    public static Bitmap Lowpoly(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int[] pix = new int[w * h];
+
+        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+
+        int[] resultPixes = OpenCVCPP.Lowpoly(pix, w, h, 1);
+        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
+
+        return result;
+    }
+
+    /**
      * 水彩画
      *
-     * @param bitmap
-     * @return
+     * @param bitmap             原图片
+     * @param watercolor_texture 纹理图
+     * @return 处理结果
      */
     public static Bitmap WaterColor(Bitmap bitmap, Bitmap watercolor_texture) {
         int w = bitmap.getWidth();
@@ -112,53 +136,12 @@ public class ImageHelperJNI {
         return result;
     }
 
-    /**
-     * 抽象画
-     *
-     * @param bitmap
-     * @return
-     */
-    public static Bitmap CoherenceFilter(Bitmap bitmap) {
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        int[] pix = new int[w * h];
-
-        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
-
-        int[] resultPixes = OpenCVCPP.CoherenceFilter(pix, w, h);
-        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
-        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
-
-        return result;
-    }
-
-    /**
-     * 低面多边形
-     *
-     * @param bitmap
-     * @return
-     */
-    public static Bitmap Lowpoly(Bitmap bitmap) {
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        int[] pix = new int[w * h];
-
-        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
-
-        int[] resultPixes = OpenCVCPP.Lowpoly(pix, w, h, 1);
-        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
-        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
-
-        return result;
-    }
 
     /**
      * 浮雕
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
     public static Bitmap Carving(Bitmap bitmap) {
         int w = bitmap.getWidth();
@@ -178,10 +161,10 @@ public class ImageHelperJNI {
     /**
      * 毛玻璃
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
-    public static Bitmap FrostedGlass(Bitmap bitmap) {
+    public static Bitmap Maoboli(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -199,8 +182,8 @@ public class ImageHelperJNI {
     /**
      * 马赛克
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
     public static Bitmap Mosaic(Bitmap bitmap) {
         int w = bitmap.getWidth();
@@ -218,12 +201,33 @@ public class ImageHelperJNI {
     }
 
     /**
+     * ascii马赛克
+     *
+     * @param bitmap 原图片
+     * @return 处理结果
+     */
+    public static Bitmap ascii(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int[] pix = new int[w * h];
+
+        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+
+        int[] resultPixes = OpenCVCPP.ascii(pix, w, h);
+        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
+
+        return result;
+    }
+
+    /**
      * 边缘保持
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
-    public static Bitmap edgePreserving(Bitmap bitmap) {
+    public static Bitmap edgePreservingFilter(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -241,10 +245,10 @@ public class ImageHelperJNI {
     /**
      * 风格模仿
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
-    public static Bitmap Stylization(Bitmap bitmap) {
+    public static Bitmap stylization(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -262,8 +266,8 @@ public class ImageHelperJNI {
     /**
      * 细节增强
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
     public static Bitmap detailEnhance(Bitmap bitmap) {
         int w = bitmap.getWidth();
@@ -283,10 +287,10 @@ public class ImageHelperJNI {
     /**
      * 粉笔画
      *
-     * @param bitmap
-     * @return
+     * @param bitmap 原图片
+     * @return 处理结果
      */
-    public static Bitmap ChalkPaint(Bitmap bitmap) {
+    public static Bitmap Fenbi(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -298,6 +302,49 @@ public class ImageHelperJNI {
         Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
         result.setPixels(resultPixes, 0, w, 0, 0, w, h);
 
+        return result;
+    }
+
+    /**
+     * 线条画
+     *
+     * @param bitmap 原图片
+     * @return 处理结果
+     */
+    public static Bitmap Line(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int[] pix = new int[w * h];
+
+        bitmap.getPixels(pix, 0, w, 0, 0, w, h);
+
+        int[] resultPixes = OpenCVCPP.Line(pix, w, h);
+        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
+
+        return result;
+    }
+
+    /**
+     * 多色调
+     *
+     * @param bitmap 原图片
+     * @param div    div可选2的倍数 越大颜色越少
+     * @return 处理结果
+     */
+    public static Bitmap ColorReduce(Bitmap bitmap, int div) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+
+        int[] buf = new int[w * h];
+        bitmap.getPixels(buf, 0, w, 0, 0, w, h);
+
+        int[] resultPixes = OpenCVCPP.ColorReduce(buf, w, h, div);
+
+        result.setPixels(resultPixes, 0, w, 0, 0, w, h);
         return result;
     }
 }

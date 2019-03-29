@@ -3,9 +3,7 @@ package com.zkp.fsh;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,10 +14,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.coder.zzq.smartshow.dialog.SmartDialog;
-import com.coder.zzq.smartshow.dialog.creator.type.impl.DialogCreatorFactory;
 import com.coder.zzq.smartshow.toast.SmartToast;
-import com.hqu.cst.sketcher.ImageHelperJNI;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -65,10 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mImageView;
     private File file;
 
-    private SketcherTask mSketcherTask;
-    private Bitmap mBitmap;
-    private Bitmap mBitmapSketcher;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Permission.READ_EXTERNAL_STORAGE,
                 Permission.WRITE_EXTERNAL_STORAGE,
                 Permission.CAMERA);
-
-        mBitmapSketcher = BitmapFactory.decodeResource(getResources(), R.drawable.pencil_texture);
 
         file = new File(Environment.getExternalStorageDirectory() + File.separator + "浮生绘", "");
 
@@ -197,11 +186,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
                     Logger.d(selectList.get(0).getCompressPath());
 
-                    mBitmap = BitmapFactory.decodeFile(selectList.get(0).getCompressPath());
-                    mImageView.setImageBitmap(mBitmap);
+                    Intent intent = new Intent(MainActivity.this, SketcherPictureActivity.class);
+                    intent.putExtra("imgPath", selectList.get(0).getCompressPath());
+                    startActivity(intent);
 
-                    mSketcherTask = new SketcherTask();
-                    mSketcherTask.execute();
+//                    mBitmap = BitmapFactory.decodeFile(selectList.get(0).getCompressPath());
+//                    mImageView.setImageBitmap(mBitmap);
+//
+//                    mSketcherTask = new SketcherTask();
+//                    mSketcherTask.execute();
 
 
                     // 例如 LocalMedia 里面返回三种path
@@ -211,58 +204,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
                     break;
                 case REQUEST_CODE_SETTING: {
-                    SmartToast.success("获取权限成功");
+//                    SmartToast.success("获取权限成功");
                     break;
                 }
                 default:
                     break;
             }
-        }
-    }
-
-    private class SketcherTask extends AsyncTask<Void, Integer, Bitmap> {
-
-        private SmartDialog mLargeLoadingDialog;
-
-        /**
-         * 接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果
-         *
-         * @param params Voids
-         * @return bitmap
-         */
-        @Override
-        protected Bitmap doInBackground(Void... params) {
-            return ImageHelperJNI.ColorPencil(mBitmap, mBitmapSketcher);
-        }
-
-        /**
-         * 线程任务前的操作
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (mLargeLoadingDialog == null) {
-                mLargeLoadingDialog = SmartDialog.newInstance(
-                        DialogCreatorFactory
-                                .loading()
-                                .large()
-                                .message("处理中...")
-                )
-                        .reuse(true);
-            }
-            mLargeLoadingDialog.show(MainActivity.this);
-        }
-
-        /**
-         * 接收线程任务执行结果、将执行结果显示到UI组件
-         *
-         * @param bitmap bitmap
-         */
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-            mLargeLoadingDialog.dismiss(MainActivity.this);
-            mImageView.setImageBitmap(bitmap);
         }
     }
 }
