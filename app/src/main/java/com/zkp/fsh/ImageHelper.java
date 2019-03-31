@@ -61,14 +61,38 @@ public class ImageHelper {
      * 压缩图片至指定大小
      *
      * @param bgimage
-     * @param newWidth  新的宽度
-     * @param newHeight 新的高度
+     * @param newWidth 新的宽度
+     * @return
+     */
+    public static Bitmap zoomImageToFixedSize(Bitmap bgimage, double newWidth) {
+        // 获取这个图片的宽和高
+        float width = bgimage.getWidth();
+        float height = bgimage.getHeight();
+
+
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 计算宽高缩放比例
+        float scale = ((float) newWidth) / width;
+        // 缩放图片动作
+        matrix.postScale(scale, scale);
+        Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) width,
+                (int) height, matrix, true);
+        return bitmap;
+    }
+
+    /**
+     * 压缩图片至指定大小
+     *
+     * @param bgimage
+     * @param newWidth 新的宽度
      * @return
      */
     public static Bitmap zoomImageToFixedSize(Bitmap bgimage, double newWidth, double newHeight) {
         // 获取这个图片的宽和高
         float width = bgimage.getWidth();
         float height = bgimage.getHeight();
+
 
         // 创建操作图片用的matrix对象
         Matrix matrix = new Matrix();
@@ -80,6 +104,25 @@ public class ImageHelper {
         Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) width,
                 (int) height, matrix, true);
         return bitmap;
+    }
+
+    /**
+     * 根据比例压缩图片
+     *
+     * @param bitmap bitmap
+     * @param scale  压缩比例
+     * @return 处理结果
+     */
+    public static Bitmap zoomImageByScale(Bitmap bitmap, float scale) {
+        // 获取这个图片的宽和高
+        float width = bitmap.getWidth();
+        float height = bitmap.getHeight();
+        // 创建操作图片用的matrix对象
+        Matrix matrix = new Matrix();
+        // 计算宽高缩放比例
+        // 缩放图片动作
+        matrix.postScale(scale, scale);
+        return Bitmap.createBitmap(bitmap, 0, 0, (int) (width * scale), (int) (height * scale), matrix, true);
     }
 
     /**
@@ -536,7 +579,7 @@ public class ImageHelper {
                 rgb[1] = (inPixels[index] >> 8) & 0xff;
                 rgb[2] = inPixels[index] & 0xff;
 
-				/* adjust region to fit in source image */
+                /* adjust region to fit in source image */
                 // color difference and moment Image
                 double moment = 0.0d;
                 for (int subRow = -semiRow; subRow <= semiRow; subRow++) {

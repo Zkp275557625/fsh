@@ -14,6 +14,11 @@ public class PreviewItemBean {
     private Bitmap bitmap;
     private String name;
 
+    public PreviewItemBean(Bitmap bitmap, String name) {
+        this.bitmap = bitmap;
+        this.name = name;
+    }
+
     public Bitmap getBitmap() {
         return bitmap;
     }
