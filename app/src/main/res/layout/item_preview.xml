@@ -9,7 +9,8 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
-        android:background="@mipmap/ic_launcher" />
+        android:background="@mipmap/ic_launcher"
+        android:src="@drawable/preview_selected" />
 
     <TextView
         android:id="@+id/tvName"

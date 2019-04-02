@@ -9,10 +9,11 @@
         android:layout_height="150dp"
         android:layout_alignParentBottom="true" />
 
-    <ImageView
+    <com.zkp.fsh.imageview.ImageViewTouch
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/recyclerView" />
+        android:layout_above="@id/recyclerView"
+        android:layout_marginBottom="10dp" />
 
 </RelativeLayout>

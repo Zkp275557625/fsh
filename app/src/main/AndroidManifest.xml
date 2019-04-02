@@ -30,8 +30,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SketcherPictureActivity" />
-
+        <activity android:name=".edit.SketcherPictureActivity" />
 
     </application>
 

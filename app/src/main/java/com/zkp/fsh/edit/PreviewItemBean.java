@@ -1,4 +1,4 @@
-package com.zkp.fsh;
+package com.zkp.fsh.edit;
 
 import android.graphics.Bitmap;
 
@@ -13,10 +13,19 @@ public class PreviewItemBean {
 
     private Bitmap bitmap;
     private String name;
+    private boolean isShowSelected = false;
 
     public PreviewItemBean(Bitmap bitmap, String name) {
         this.bitmap = bitmap;
         this.name = name;
+    }
+
+    public boolean isShowSelected() {
+        return isShowSelected;
+    }
+
+    public void setShowSelected(boolean showSelected) {
+        isShowSelected = showSelected;
     }
 
     public Bitmap getBitmap() {

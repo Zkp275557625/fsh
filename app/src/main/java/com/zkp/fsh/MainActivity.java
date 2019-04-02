@@ -3,7 +3,6 @@ package com.zkp.fsh;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +22,7 @@ import com.orhanobut.logger.Logger;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
+import com.zkp.fsh.edit.SketcherPictureActivity;
 
 import java.io.File;
 import java.util.List;
