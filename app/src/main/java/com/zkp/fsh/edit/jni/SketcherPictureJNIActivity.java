@@ -1,4 +1,4 @@
-package com.zkp.fsh.edit;
+package com.zkp.fsh.edit.jni;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +15,8 @@ import com.coder.zzq.smartshow.dialog.creator.type.impl.DialogCreatorFactory;
 import com.hqu.cst.sketcher.ImageHelperJNI;
 import com.hqu.cst.sketcher.ImageHelper;
 import com.zkp.fsh.R;
+import com.zkp.fsh.edit.PreviewAdapter;
+import com.zkp.fsh.edit.PreviewItemBean;
 import com.zkp.fsh.imageview.ImageViewTouch;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import java.util.List;
  * @time: 2019/3/29 13:26
  * @description:
  */
-public class SketcherPictureActivity extends AppCompatActivity {
+public class SketcherPictureJNIActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private ImageViewTouch mImageView;
@@ -112,6 +114,8 @@ public class SketcherPictureActivity extends AppCompatActivity {
                     return ImageHelperJNI.Pencil(mBitmap, mBitmapSketcher);
                 case 15:
                     return ImageHelperJNI.ColorPencil(mBitmap, mBitmapSketcher);
+                case 16:
+                    return ImageHelper.Ascii(mBitmap, SketcherPictureJNIActivity.this);
                 default:
                     return mBitmap;
             }
@@ -132,7 +136,7 @@ public class SketcherPictureActivity extends AppCompatActivity {
                 )
                         .reuse(true);
             }
-            mLargeLoadingDialog.show(SketcherPictureActivity.this);
+            mLargeLoadingDialog.show(SketcherPictureJNIActivity.this);
         }
 
         /**
@@ -143,7 +147,7 @@ public class SketcherPictureActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-            mLargeLoadingDialog.dismiss(SketcherPictureActivity.this);
+            mLargeLoadingDialog.dismiss(SketcherPictureJNIActivity.this);
             mImageView.setImageBitmap(bitmap);
         }
     }
@@ -189,6 +193,7 @@ public class SketcherPictureActivity extends AppCompatActivity {
             previewBitmaps.add(ImageHelperJNI.ColorReduce(bitmaps[0], 64));
             previewBitmaps.add(ImageHelperJNI.Pencil(mBitmap, mBitmapSketcher));
             previewBitmaps.add(ImageHelperJNI.ColorPencil(mBitmap, mBitmapSketcher));
+            previewBitmaps.add(ImageHelper.Ascii(mBitmap, SketcherPictureJNIActivity.this));
             return previewBitmaps;
         }
 
@@ -207,7 +212,7 @@ public class SketcherPictureActivity extends AppCompatActivity {
                 )
                         .reuse(true);
             }
-            mLargeLoadingDialog.show(SketcherPictureActivity.this);
+            mLargeLoadingDialog.show(SketcherPictureJNIActivity.this);
         }
 
         /**
@@ -218,7 +223,7 @@ public class SketcherPictureActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Bitmap> bitmaps) {
             super.onPostExecute(bitmaps);
-            mLargeLoadingDialog.dismiss(SketcherPictureActivity.this);
+            mLargeLoadingDialog.dismiss(SketcherPictureJNIActivity.this);
             mPreviewItemBeans.add(new PreviewItemBean(bitmaps.get(0), "原图"));
             mPreviewItemBeans.add(new PreviewItemBean(bitmaps.get(1), "抽象画"));
             mPreviewItemBeans.add(new PreviewItemBean(bitmaps.get(2), "LowPoly"));
@@ -235,8 +240,9 @@ public class SketcherPictureActivity extends AppCompatActivity {
             mPreviewItemBeans.add(new PreviewItemBean(bitmaps.get(13), "多色调"));
             mPreviewItemBeans.add(new PreviewItemBean(ImageHelper.zoomImageToFixedSize(bitmaps.get(14), 200, 200), "铅笔画"));
             mPreviewItemBeans.add(new PreviewItemBean(ImageHelper.zoomImageToFixedSize(bitmaps.get(15), 200, 200), "彩色铅笔画"));
+            mPreviewItemBeans.add(new PreviewItemBean(ImageHelper.zoomImageToFixedSize(bitmaps.get(16), 200, 200), "Ascii"));
 
-            mAdapter = new PreviewAdapter(SketcherPictureActivity.this, mPreviewItemBeans);
+            mAdapter = new PreviewAdapter(SketcherPictureJNIActivity.this, mPreviewItemBeans);
             mRecyclerView.setAdapter(mAdapter);
 
             mAdapter.setOnItemClickListener(this);

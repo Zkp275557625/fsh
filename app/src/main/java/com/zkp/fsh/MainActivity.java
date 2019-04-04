@@ -11,9 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.coder.zzq.smartshow.toast.SmartToast;
+import com.coorchice.library.SuperTextView;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -22,7 +22,9 @@ import com.orhanobut.logger.Logger;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
-import com.zkp.fsh.edit.SketcherPictureActivity;
+import com.zkp.fsh.edit.java.SketcherPictureJavaActivity;
+import com.zkp.fsh.edit.jni.SketcherPictureJNIActivity;
+import com.zkp.fsh.video.VideoAsciiActivity;
 
 import java.io.File;
 import java.util.List;
@@ -56,9 +58,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int REQUEST_CODE_SETTING = 0x001;
-    private ImageView mImageView;
+    private static final int REQUEST_CODE_SETTING = 0x0001;
+    private static final int JNI_CODE = 0x0002;
+    private static final int JAVA_CODE = 0x0003;
+    private static final int VIDEO_CODE = 0x0004;
+
+    private SuperTextView mStvImageSketcherJNI, mStvImageSketcherJava, stvVideoSketcher;
     private File file;
+    private List<LocalMedia> selectList;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +80,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         file = new File(Environment.getExternalStorageDirectory() + File.separator + "浮生绘", "");
 
-        mImageView = findViewById(R.id.imageView);
+        mStvImageSketcherJNI = findViewById(R.id.stvImageSketcherJNI);
+        mStvImageSketcherJava = findViewById(R.id.stvImageSketcherJava);
+        stvVideoSketcher = findViewById(R.id.stvVideoSketcher);
 
-        mImageView.setOnClickListener(this);
+        mStvImageSketcherJNI.setOnClickListener(this);
+        mStvImageSketcherJava.setOnClickListener(this);
+        stvVideoSketcher.setOnClickListener(this);
     }
 
     private void requestPermission(String... permissions) {
@@ -129,9 +141,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.imageView:
+            case R.id.stvImageSketcherJNI:
                 //选择图片显示到ImageView中
-                selectPicture();
+                selectPicture(JNI_CODE);
+                break;
+            case R.id.stvImageSketcherJava:
+                selectPicture(JAVA_CODE);
+                break;
+            case R.id.stvVideoSketcher:
+                selectVideo(VIDEO_CODE);
                 break;
             default:
                 break;
@@ -141,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 选择图片显示到ImageView中
      */
-    private void selectPicture() {
+    private void selectPicture(int code) {
 
         if (!file.exists()) {
             //创建文件夹
@@ -173,7 +191,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .cropCompressQuality(90)
                 .minimumCompressSize(100)
                 .synOrAsy(true)
-                .forResult(PictureConfig.CHOOSE_REQUEST);
+                .forResult(code);
+    }
+
+    /**
+     * 选择video
+     *
+     * @param code request code
+     */
+    private void selectVideo(int code) {
+        file = new File(Environment.getExternalStorageDirectory() + File.separator + "浮生绘" + File.separator + "video", "");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        PictureSelector.create(MainActivity.this)
+                .openGallery(PictureMimeType.ofVideo())
+                .theme(R.style.picture_default_style)
+                .maxSelectNum(1)
+                .imageSpanCount(4)
+                .selectionMode(PictureConfig.SINGLE)
+                .previewVideo(true)
+                .isCamera(false)
+                .imageFormat(PictureMimeType.PNG)
+                .isZoomAnim(true)
+                .compress(true)
+                .sizeMultiplier(0.5f)
+                .compressSavePath(file.getAbsolutePath())
+                .synOrAsy(true)
+                .forResult(code);
     }
 
     @Override
@@ -181,32 +227,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case PictureConfig.CHOOSE_REQUEST:
-                    //图片选择结果回调
-                    List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+                case JNI_CODE:
+                    selectList = PictureSelector.obtainMultipleResult(data);
                     Logger.d(selectList.get(0).getCompressPath());
 
-                    Intent intent = new Intent(MainActivity.this, SketcherPictureActivity.class);
+                    intent = new Intent(MainActivity.this, SketcherPictureJNIActivity.class);
                     intent.putExtra("imgPath", selectList.get(0).getCompressPath());
                     startActivity(intent);
-
-//                    mBitmap = BitmapFactory.decodeFile(selectList.get(0).getCompressPath());
-//                    mImageView.setImageBitmap(mBitmap);
-//
-//                    mSketcherTask = new SketcherTask();
-//                    mSketcherTask.execute();
-
-
-                    // 例如 LocalMedia 里面返回三种path
-                    // 1.media.getPath(); 为原图path
-                    // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true  注意：音视频除外
-                    // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true  注意：音视频除外
-                    // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
                     break;
-                case REQUEST_CODE_SETTING: {
-//                    SmartToast.success("获取权限成功");
+                case JAVA_CODE:
+                    selectList = PictureSelector.obtainMultipleResult(data);
+                    Logger.d(selectList.get(0).getCompressPath());
+
+                    intent = new Intent(MainActivity.this, SketcherPictureJavaActivity.class);
+                    intent.putExtra("imgPath", selectList.get(0).getCompressPath());
+                    startActivity(intent);
                     break;
-                }
+                case VIDEO_CODE:
+                    selectList = PictureSelector.obtainMultipleResult(data);
+                    intent = new Intent(MainActivity.this, VideoAsciiActivity.class);
+                    if (selectList.get(0).isCompressed()) {
+                        Logger.d(selectList.get(0).getCompressPath());
+                        intent.putExtra("videoPath", selectList.get(0).getCompressPath());
+                    } else if (selectList.get(0).isCut()) {
+                        Logger.d(selectList.get(0).getCutPath());
+                        intent.putExtra("videoPath", selectList.get(0).getCutPath());
+                    } else {
+                        Logger.d(selectList.get(0).getPath());
+                        intent.putExtra("videoPath", selectList.get(0).getPath());
+                    }
+                    startActivity(intent);
+                    break;
                 default:
                     break;
             }

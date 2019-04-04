@@ -1,6 +1,8 @@
 package com.hqu.cst.sketcher;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -9,6 +11,12 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
+import android.graphics.Typeface;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 /**
  * 创建人：周开平
@@ -494,7 +502,7 @@ public class ImageHelper {
      * @return
      */
     public static Bitmap WaterStreak(Bitmap bitmap) {
-        double wave = 20.0;
+        double wave = 10.0;
         double period = 128;
 
         int width = bitmap.getWidth();
@@ -1740,7 +1748,7 @@ public class ImageHelper {
      * @param radius 半径
      * @return 模糊的图片
      */
-    public static Bitmap FastBuklr(Bitmap bitmap, int radius) {
+    public static Bitmap fastBuklr(Bitmap bitmap, int radius) {
 
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
@@ -1935,5 +1943,74 @@ public class ImageHelper {
         }
         result.setPixels(pix, 0, w, 0, 0, w, h);
         return result;
+    }
+
+    /**
+     * 图片转Ascii码
+     *
+     * @param bitmap  Bitmap
+     * @param context 上下文
+     * @return 效果Bitmap
+     */
+    public static Bitmap Ascii(Bitmap bitmap, Context context) {
+        final String base = "#8XOHLTI)i=+;:,.";// 字符串由复杂到简单
+        StringBuilder text = new StringBuilder();
+
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidth = displayMetrics.widthPixels;
+
+        int newWidth = bitmap.getWidth(), newHeight = bitmap.getHeight();
+
+        if (bitmap.getWidth() > screenWidth / 7) {
+            newWidth = screenWidth / 7;
+            newHeight = newWidth * bitmap.getHeight() / bitmap.getWidth();
+        }
+
+        bitmap = scale(bitmap, newWidth, newHeight);
+
+        //输出到指定文件中
+        for (int y = 0; y < bitmap.getHeight(); y += 2) {
+            for (int x = 0; x < newWidth; x++) {
+                final int pixel = bitmap.getPixel(x, y);
+                final int r = (pixel & 0xff0000) >> 16, g = (pixel & 0xff00) >> 8, b = pixel & 0xff;
+                final float gray = 0.299f * r + 0.578f * g + 0.114f * b;
+                final int index = Math.round(gray * (base.length() + 1) / 255);
+                String s = index >= base.length() ? " " : String.valueOf(base.charAt(index));
+                text.append(s);
+            }
+            text.append("\n");
+        }
+        return textAsBitmap(text, context);
+    }
+
+    public static Bitmap scale(Bitmap bitmap, int newWidth, int newHeight) {
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+    }
+
+    public static Bitmap textAsBitmap(StringBuilder text, Context context) {
+        TextPaint textPaint = new TextPaint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setAntiAlias(true);
+        textPaint.setTypeface(Typeface.MONOSPACE);
+        textPaint.setTextSize(12);
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+
+        StaticLayout layout = new StaticLayout(text, textPaint, width,
+                Layout.Alignment.ALIGN_CENTER, 1f, 0.0f, true);
+
+        Bitmap bitmap = Bitmap.createBitmap(layout.getWidth() + 20,
+                layout.getHeight() + 20, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        canvas.translate(10, 10);
+        canvas.drawColor(Color.WHITE);
+        layout.draw(canvas);
+        return bitmap;
     }
 }
