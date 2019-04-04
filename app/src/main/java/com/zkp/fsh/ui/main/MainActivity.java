@@ -1,4 +1,4 @@
-package com.zkp.fsh;
+package com.zkp.fsh.ui.main;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,16 +15,16 @@ import android.view.View;
 import com.coder.zzq.smartshow.toast.SmartToast;
 import com.coorchice.library.SuperTextView;
 import com.luck.picture.lib.PictureSelector;
-import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.orhanobut.logger.Logger;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.runtime.Permission;
-import com.zkp.fsh.edit.java.SketcherPictureJavaActivity;
-import com.zkp.fsh.edit.jni.SketcherPictureJNIActivity;
-import com.zkp.fsh.video.VideoAsciiActivity;
+import com.zkp.fsh.R;
+import com.zkp.fsh.RuntimeRationale;
+import com.zkp.fsh.ui.edit.java.SketcherPictureJavaActivity;
+import com.zkp.fsh.ui.edit.jni.SketcherPictureJNIActivity;
 
 import java.io.File;
 import java.util.List;
@@ -61,9 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CODE_SETTING = 0x0001;
     private static final int JNI_CODE = 0x0002;
     private static final int JAVA_CODE = 0x0003;
-    private static final int VIDEO_CODE = 0x0004;
 
-    private SuperTextView mStvImageSketcherJNI, mStvImageSketcherJava, stvVideoSketcher;
+    private SuperTextView mStvImageSketcherJNI, mStvImageSketcherJava;
     private File file;
     private List<LocalMedia> selectList;
     private Intent intent;
@@ -82,11 +81,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mStvImageSketcherJNI = findViewById(R.id.stvImageSketcherJNI);
         mStvImageSketcherJava = findViewById(R.id.stvImageSketcherJava);
-        stvVideoSketcher = findViewById(R.id.stvVideoSketcher);
 
         mStvImageSketcherJNI.setOnClickListener(this);
         mStvImageSketcherJava.setOnClickListener(this);
-        stvVideoSketcher.setOnClickListener(this);
     }
 
     private void requestPermission(String... permissions) {
@@ -97,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .onGranted(new Action<List<String>>() {
                     @Override
                     public void onAction(List<String> permissions) {
-                        SmartToast.success("获取权限成功");
                     }
                 })
                 .onDenied(new Action<List<String>>() {
@@ -148,9 +144,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.stvImageSketcherJava:
                 selectPicture(JAVA_CODE);
                 break;
-            case R.id.stvVideoSketcher:
-                selectVideo(VIDEO_CODE);
-                break;
             default:
                 break;
         }
@@ -194,34 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .forResult(code);
     }
 
-    /**
-     * 选择video
-     *
-     * @param code request code
-     */
-    private void selectVideo(int code) {
-        file = new File(Environment.getExternalStorageDirectory() + File.separator + "浮生绘" + File.separator + "video", "");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        PictureSelector.create(MainActivity.this)
-                .openGallery(PictureMimeType.ofVideo())
-                .theme(R.style.picture_default_style)
-                .maxSelectNum(1)
-                .imageSpanCount(4)
-                .selectionMode(PictureConfig.SINGLE)
-                .previewVideo(true)
-                .isCamera(false)
-                .imageFormat(PictureMimeType.PNG)
-                .isZoomAnim(true)
-                .compress(true)
-                .sizeMultiplier(0.5f)
-                .compressSavePath(file.getAbsolutePath())
-                .synOrAsy(true)
-                .forResult(code);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -241,21 +206,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     intent = new Intent(MainActivity.this, SketcherPictureJavaActivity.class);
                     intent.putExtra("imgPath", selectList.get(0).getCompressPath());
-                    startActivity(intent);
-                    break;
-                case VIDEO_CODE:
-                    selectList = PictureSelector.obtainMultipleResult(data);
-                    intent = new Intent(MainActivity.this, VideoAsciiActivity.class);
-                    if (selectList.get(0).isCompressed()) {
-                        Logger.d(selectList.get(0).getCompressPath());
-                        intent.putExtra("videoPath", selectList.get(0).getCompressPath());
-                    } else if (selectList.get(0).isCut()) {
-                        Logger.d(selectList.get(0).getCutPath());
-                        intent.putExtra("videoPath", selectList.get(0).getCutPath());
-                    } else {
-                        Logger.d(selectList.get(0).getPath());
-                        intent.putExtra("videoPath", selectList.get(0).getPath());
-                    }
                     startActivity(intent);
                     break;
                 default:

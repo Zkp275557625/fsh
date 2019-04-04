@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.main.MainActivity">
 
     <com.coorchice.library.SuperTextView
         android:id="@+id/stvImageSketcherJNI"
@@ -21,28 +21,12 @@
         app:stv_solid="@color/colorPrimary" />
 
     <com.coorchice.library.SuperTextView
-        android:id="@+id/stvVideoSketcher"
-        android:layout_width="180dp"
-        android:layout_height="100dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="20dp"
-        android:layout_toRightOf="@id/stvImageSketcherJNI"
-        android:gravity="center"
-        android:text="视频处理"
-        android:textSize="18sp"
-        app:stv_corner="15dp"
-        app:stv_pressBgColor="@color/colorPrimaryDark"
-        app:stv_pressTextColor="@color/colorWhite"
-        app:stv_solid="@color/colorPrimary" />
-
-    <com.coorchice.library.SuperTextView
         android:id="@+id/stvImageSketcherJava"
         android:layout_width="180dp"
         android:layout_height="100dp"
-        android:layout_below="@id/stvImageSketcherJNI"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="50dp"
+        android:layout_toRightOf="@id/stvImageSketcherJNI"
         android:gravity="center"
         android:text="图像处理Java"
         android:textSize="14sp"

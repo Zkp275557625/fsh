@@ -21,7 +21,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,8 +30,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".edit.jni.SketcherPictureJNIActivity" />
-        <activity android:name=".edit.java.SketcherPictureJavaActivity" />
+        <activity android:name=".ui.edit.jni.SketcherPictureJNIActivity" />
+        <activity android:name=".ui.edit.java.SketcherPictureJavaActivity" />
         <activity android:name=".video.VideoAsciiActivity" />
 
         <provider

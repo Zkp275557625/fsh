@@ -1,4 +1,4 @@
-package com.zkp.fsh.edit.java;
+package com.zkp.fsh.ui.edit.java;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,8 +14,8 @@ import com.coder.zzq.smartshow.dialog.SmartDialog;
 import com.coder.zzq.smartshow.dialog.creator.type.impl.DialogCreatorFactory;
 import com.hqu.cst.sketcher.ImageHelper;
 import com.zkp.fsh.R;
-import com.zkp.fsh.edit.PreviewAdapter;
-import com.zkp.fsh.edit.PreviewItemBean;
+import com.zkp.fsh.ui.edit.PreviewAdapter;
+import com.zkp.fsh.ui.edit.PreviewItemBean;
 import com.zkp.fsh.imageview.ImageViewTouch;
 
 import java.util.ArrayList;
@@ -88,9 +88,9 @@ public class SketcherPictureJavaActivity extends AppCompatActivity {
                 case 2:
                     return ImageHelper.FireImage(mBitmap);
                 case 3:
-                    return ImageHelper.Delusion(mBitmap);
+                    return ImageHelper.Delusion(ImageHelper.toSquare(mBitmap));
                 case 4:
-                    return ImageHelper.Brushing(mBitmap);
+                    return ImageHelper.Brushing(ImageHelper.toSquare(mBitmap));
                 case 5:
                     return ImageHelper.Shutter(mBitmap);
                 case 6:
@@ -126,15 +126,15 @@ public class SketcherPictureJavaActivity extends AppCompatActivity {
                 case 21:
                     return ImageHelper.Feather(mBitmap);
                 case 22:
-                    return ImageHelper.Magnifier(mBitmap, 50);
+                    return ImageHelper.Magnifier(mBitmap);
                 case 23:
-                    return ImageHelper.MagicMirror(mBitmap, 50);
+                    return ImageHelper.MagicMirror(ImageHelper.toSquare(mBitmap));
                 case 24:
                     return ImageHelper.Masic(mBitmap);
                 case 25:
                     return ImageHelper.Cartoon(mBitmap);
                 case 26:
-                    return ImageHelper.RadialDistortion(mBitmap);
+                    return ImageHelper.RadialDistortion(ImageHelper.toSquare(mBitmap));
                 case 27:
                     return ImageHelper.Bright(mBitmap);
                 case 28:
@@ -224,8 +224,8 @@ public class SketcherPictureJavaActivity extends AppCompatActivity {
             previewBitmaps.add(ImageHelper.InvertedImg(bitmaps[0]));
             previewBitmaps.add(ImageHelper.SunshineImage(bitmaps[0]));
             previewBitmaps.add(ImageHelper.Feather(bitmaps[0]));
-            previewBitmaps.add(ImageHelper.Magnifier(bitmaps[0], 50));
-            previewBitmaps.add(ImageHelper.MagicMirror(bitmaps[0], 50));
+            previewBitmaps.add(ImageHelper.Magnifier(bitmaps[0]));
+            previewBitmaps.add(ImageHelper.MagicMirror(ImageHelper.toSquare(bitmaps[0])));
             previewBitmaps.add(ImageHelper.Masic(bitmaps[0]));
             previewBitmaps.add(ImageHelper.Cartoon(bitmaps[0]));
             previewBitmaps.add(ImageHelper.RadialDistortion(bitmaps[0]));

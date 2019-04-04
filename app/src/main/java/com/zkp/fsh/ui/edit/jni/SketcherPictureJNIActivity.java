@@ -1,4 +1,4 @@
-package com.zkp.fsh.edit.jni;
+package com.zkp.fsh.ui.edit.jni;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,8 +15,8 @@ import com.coder.zzq.smartshow.dialog.creator.type.impl.DialogCreatorFactory;
 import com.hqu.cst.sketcher.ImageHelperJNI;
 import com.hqu.cst.sketcher.ImageHelper;
 import com.zkp.fsh.R;
-import com.zkp.fsh.edit.PreviewAdapter;
-import com.zkp.fsh.edit.PreviewItemBean;
+import com.zkp.fsh.ui.edit.PreviewAdapter;
+import com.zkp.fsh.ui.edit.PreviewItemBean;
 import com.zkp.fsh.imageview.ImageViewTouch;
 
 import java.util.ArrayList;

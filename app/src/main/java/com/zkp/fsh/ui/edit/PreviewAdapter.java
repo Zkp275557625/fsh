@@ -1,4 +1,4 @@
-package com.zkp.fsh.edit;
+package com.zkp.fsh.ui.edit;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;

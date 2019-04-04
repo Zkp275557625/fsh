@@ -1,4 +1,4 @@
-package com.zkp.fsh.edit;
+package com.zkp.fsh.ui.edit;
 
 import android.graphics.Bitmap;
 

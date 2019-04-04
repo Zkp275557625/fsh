@@ -1287,10 +1287,10 @@ public class ImageHelper {
      * @param radius
      * @return
      */
-    public static Bitmap Magnifier(Bitmap bitmap, int radius) {
+    public static Bitmap Magnifier(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-
+        int radius = (int) (Math.min(w, h) * 0.5);
         Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
 
         int[] oldPx = new int[w * h];
@@ -1350,9 +1350,10 @@ public class ImageHelper {
      * @param radius
      * @return
      */
-    public static Bitmap MagicMirror(Bitmap bitmap, int radius) {
+    public static Bitmap MagicMirror(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
+        int radius = (int) (Math.min(w, h) * 0.5);
         Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
 
         int[] oldPx = new int[w * h];
