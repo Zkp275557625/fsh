@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int JAVA_CODE = 0x0003;
 
     private SuperTextView mStvImageSketcherJNI, mStvImageSketcherJava;
-    private File file;
+    public static File file;
     private List<LocalMedia> selectList;
     private Intent intent;
 

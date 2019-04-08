@@ -1,24 +1,33 @@
 package com.zkp.fsh.ui.edit.jni;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.coder.zzq.smartshow.dialog.DialogBtnClickListener;
 import com.coder.zzq.smartshow.dialog.SmartDialog;
 import com.coder.zzq.smartshow.dialog.creator.type.impl.DialogCreatorFactory;
+import com.coder.zzq.smartshow.toast.SmartToast;
 import com.hqu.cst.sketcher.ImageHelperJNI;
 import com.hqu.cst.sketcher.ImageHelper;
 import com.zkp.fsh.R;
 import com.zkp.fsh.ui.edit.PreviewAdapter;
 import com.zkp.fsh.ui.edit.PreviewItemBean;
 import com.zkp.fsh.imageview.ImageViewTouch;
+import com.zkp.fsh.ui.main.MainActivity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +50,7 @@ public class SketcherPictureJNIActivity extends AppCompatActivity {
     private List<PreviewItemBean> mPreviewItemBeans;
 
     private int mPosition;
+    private SmartDialog mDialogSaveImage;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,6 +77,45 @@ public class SketcherPictureJNIActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.imageView);
 
         mImageView.setImageBitmap(mBitmap);
+
+        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (mDialogSaveImage == null) {
+                        mDialogSaveImage = SmartDialog.newInstance(
+                                DialogCreatorFactory
+                                        .ensure()
+                                        .confirmBtn("确定", new DialogBtnClickListener() {
+                                            @Override
+                                            public void onBtnClick(Dialog dialog, int i, Object o) {
+                                                //确定保存图片到手机上
+                                                File file = ImageHelper.saveImage(ImageHelper.getBitmap(mImageView.getDrawable()),
+                                                        MainActivity.file.getAbsolutePath());
+                                                // 其次把文件插入到系统图库
+                                                try {
+                                                    MediaStore.Images.Media.insertImage(getContentResolver(),
+                                                            file.getAbsolutePath(), file.getName(), null);
+                                                } catch (FileNotFoundException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                // 最后通知图库更新
+                                                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                                                Uri uri = Uri.fromFile(file);
+                                                intent.setData(uri);
+                                                sendBroadcast(intent);//这个广播的目的就是更新图库，发了这个广播进入相册就可以找到你保存的图片了！，记得要传你更新的file哦
+                                                mDialogSaveImage.dismiss(SketcherPictureJNIActivity.this);
+                                                SmartToast.success("保存成功");
+                                            }
+                                        })
+                                        .cancelBtn("取消")
+                                        .message("确定保存图片到手机？")
+                        )
+                                .reuse(true);
+                    }
+                    mDialogSaveImage.show(SketcherPictureJNIActivity.this);
+                    return false;
+                }
+        });
     }
 
     private class SketcherTask extends AsyncTask<Bitmap, Integer, Bitmap> {

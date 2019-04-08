@@ -8,15 +8,22 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * 创建人：周开平
@@ -153,6 +160,33 @@ public class ImageHelper {
             result = Bitmap.createBitmap(bitmap, s, 0, h, h);
         }
         return result;
+    }
+
+    /**
+     * 保存图片到手机上
+     *
+     * @param bitmap   Bitmap
+     * @param savePath 保存路径
+     */
+    public static File saveImage(Bitmap bitmap, String savePath) {
+        File appDir = new File(savePath, "");
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+            return file;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -2012,6 +2046,18 @@ public class ImageHelper {
         canvas.translate(10, 10);
         canvas.drawColor(Color.WHITE);
         layout.draw(canvas);
+        return bitmap;
+    }
+
+    public static Bitmap getBitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                        : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
         return bitmap;
     }
 }
